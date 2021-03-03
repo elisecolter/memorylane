@@ -3,6 +3,9 @@
 # C extensions
 *.so
 
+# Test data
+photos
+
 #virtualenv
 env
 

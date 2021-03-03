@@ -1,42 +1,41 @@
-from flask import url_for, redirect, render_template, flash, g, session
+from flask import url_for, request, redirect, render_template, flash, g, session
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, lm
 from app.forms import ExampleForm, LoginForm
 from app.models import User
-
+from PIL import Image, ExifTags
+import pprint
 
 @app.route('/')
 def index():
 	return render_template('index.html')
 
+@app.route("/upload-image", methods=["GET", "POST"])
+def upload_image():
 
-# @app.route('/list/')
-# def posts():
-# 	return render_template('list.html')
+    if request.method == "POST":
+
+        if request.files:
+
+            image = request.files["image"]
+            exif = Image.open(image)._getexif()
+
+            if exif is not None:
+                for tag, value in exif.items():
+                    decoded = ExifTags.TAGS.get(tag, tag)
+                    if decoded == "GPSInfo":
+                        gpsinfo = {}
+                        for t in value:
+                            sub_decoded = ExifTags.GPSTAGS.get(t,t)
+                            gpsinfo[sub_decoded] = value[t]
+                        pp = pprint.PrettyPrinter(indent=4)
+                        pp.pprint(gpsinfo)
+
+            return redirect(request.url)
 
 
-# @app.route('/new/')
-# @login_required
-# def new():
-# 	form = ExampleForm()
-# 	return render_template('new.html', form=form)
+    return render_template("upload-image.html")
 
-
-# @app.route('/save/', methods = ['GET','POST'])
-# @login_required
-# def save():
-# 	form = ExampleForm()
-# 	if form.validate_on_submit():
-# 		print("salvando os dados:")
-# 		print(form.title.data)
-# 		print(form.content.data)
-# 		print(form.date.data)
-# 		flash('Dados salvos!')
-# 	return render_template('new.html', form=form)
-
-# @app.route('/view/<id>/')
-# def view(id):
-# 	return render_template('view.html')
 
 # === User login methods ===
 

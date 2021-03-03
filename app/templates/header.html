@@ -1,0 +1,33 @@
+ <!-- Navigation -->
+<nav class="navbar main-nav" style="background-color: white;">
+  <div class="row w-100">
+    <div class="col" style="-ms-flex: 0 0 40px; flex: 0 0 40px;">
+      <button type="button" id="sidebarCollapse" class="btn" style="background-color: white; color: var(--new-orange); outline: none;">
+          <i class="fas fa-align-left"></i>
+       </button>
+    </div>
+
+    <div class="col" style="text-align: center; max-width: calc(100% - 80px);">
+      <form action="/search" class="navbar-form navbar-search text-center mx-auto" method="get" style="display:block; width:500px; max-width: 100%">
+        <div class="row">
+          <div class="col">
+            <input class="navbar-search form-control w-100" type="text" id="autocomplete" name="query" placeholder="Search OrangePages" aria-label="Search">
+          </div>
+          <div class="col" style="-ms-flex: 0 0 20px; flex: 0 0 20px; margin-left: -20px">     
+            <button type="submit" class="btn" style="background-color: white; color: var(--new-orange); outline: none;">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <div class="col-1 hidden-xs" style="-ms-flex: 0 0 20px; flex: 0 0 20px; margin-left: -20px; margin-top: 6px; color: var(--new-orange);">
+            <i data-toggle="tooltip" data-placement="bottom" title='You can search for people by any profile field, or for posts by a tag. For exact matches, use double quotes.
+            For example, enter "NJ" to find people from New Jersey.' class="fas fa-info-circle"></i>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="col" style="-ms-flex: 0 0 20px; flex: 0 0 20px;">
+    </div>
+
+  </div>
+</nav>

@@ -18,6 +18,8 @@ flask-sqlalchemy = "*"
 flask-themes = "*"
 flask-uploads = "*"
 flask-wtf = "*"
+exifread = "*"
+pillow = "*"
 
 [dev-packages]
 
