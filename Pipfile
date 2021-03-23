@@ -20,6 +20,12 @@ flask-uploads = "*"
 flask-wtf = "*"
 exifread = "*"
 pillow = "*"
+cloudinary = "*"
+flask-migrate = "*"
+flask-script = "*"
+psycopg2-binary = "*"
+geojson = "*"
+geopy = "*"
 
 [dev-packages]
 
