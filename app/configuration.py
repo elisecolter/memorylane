@@ -5,6 +5,7 @@ class Config(object):
 	"""
 	DEBUG = False
 	TESTING = False
+	SESSION_TYPE = 'filesystem'
 	SQLALCHEMY_DATABASE_URI = 'postgresql:///photos_dev'
 	BOOTSTRAP_FONTAWESOME = True
 	SECRET_KEY = "this-needs-to-be-changed"

@@ -10,6 +10,14 @@ input[type="radio"], input[type="checkbox"] {
   margin: 0;
 }
 
+.leaflet-left {
+  width: 40%;
+}
+
+.leaflet-top {
+  height: 100%;
+}
+
 .glyphicon {
   margin-bottom:10px; 
   font-size: 20px;
@@ -78,6 +86,15 @@ input[type="radio"], input[type="checkbox"] {
   -webkit-text-stroke-color: white;
 }
 
+#info-box {
+  background: white;
+  opacity:80%;
+  width: 70%;
+  height: 80%;
+  max-height: 600px;
+  margin-top: 10%;
+  margin-left: 10%;
+}
 
 
 #sidebar {

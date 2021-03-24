@@ -12,6 +12,7 @@ from flask_pymongo import PyMongo
 from flask_login import LoginManager
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_session import Session
 
 app = Flask(__name__)
 
@@ -24,6 +25,7 @@ bs = Bootstrap(app) #flask-bootstrap
 db = SQLAlchemy(app) #flask-sqlalchemy
 migrate = Migrate(app, db)
 admin = Admin(app)
+sess = Session(app)
 
 lm = LoginManager()
 lm.setup_app(app)

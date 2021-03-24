@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#000000">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>BootLeaf</title>
+    <title>TimeMachine</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -36,7 +36,7 @@
             <a href="#" class="navbar-icon pull-right visible-xs" id="nav-btn"><i class="fa fa-bars fa-lg white"></i></a>
             <a href="#" class="navbar-icon pull-right visible-xs" id="sidebar-toggle-btn"><i class="fa fa-search fa-lg white"></i></a>
           </div>
-          <a class="navbar-brand" href="#">Title</a>
+          <a class="navbar-brand" href="#">TimeMachine</a>
         </div>
         <div class="navbar-collapse collapse">
           <form class="navbar-form navbar-right" role="search">
@@ -201,14 +201,15 @@
             <h4 class="modal-title">Upload a Photo</h4>
           </div>
           <div class="modal-body">
-            <form action="/upload-image" method="POST" enctype="multipart/form-data">
+            <form id="uploadPhoto" action="/upload-image" method="POST" enctype="multipart/form-data">
               <div class="form-group">
-                <label>Select image</label>
                 <div class="custom-file">
                   <input type="file" class="custom-file-input" name="image" id="image">
                   <label class="custom-file-label" for="image">Select image...</label>
                 </div>
               </div>
+              <input type="hidden" name="lat" id="lat">
+              <input type="hidden" name="lon" id="lon">
               <button type="submit" class="btn btn-primary">Upload</button>
             </form>
           </div>

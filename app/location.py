@@ -1,4 +1,5 @@
 from PIL import Image
+import datetime
 from PIL.ExifTags import TAGS, GPSTAGS
 
 class LocationParser:
@@ -21,8 +22,6 @@ class LocationParser:
             pass
         return exif_data
 
-
-
     def _convert_to_degrees(self, value):
         d = value[0]
         m = value[1]
@@ -36,7 +35,11 @@ class LocationParser:
         return None
 
     def get_taken(self, exif_data):
-        return self._get_if_exists(exif_data, 'DateTimeOriginal')
+        taken = self._get_if_exists(exif_data, 'DateTimeOriginal')
+        try:
+            return datetime.datetime.strptime(taken, '%Y:%m:%d %H:%M:%S')
+        except:
+            return None
 
     def dest_lat_lon(self, exif_data):
         # TODO: somewhere that's not Blair Arch

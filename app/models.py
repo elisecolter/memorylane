@@ -12,7 +12,7 @@ class Location(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     lat = db.Column(db.Float)
     lon = db.Column(db.Float)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(50), default="       ")
 
     photos = relationship("Photo", back_populates="location")
 
@@ -28,8 +28,9 @@ class Location(db.Model):
     def equals(self, lat, lon):
         coords1 = (self.lat, self.lon)
         coords2 = (lat, lon)
-        dist = distance.distance(coords1, coords2)
-        return True if dist <= 5 else False
+        dist = distance.distance(coords1, coords2).m
+        print(dist)
+        return True if dist <= 5.0 else False
 
     def add_photo(self, photo):
         self.photos.append(photo)
@@ -51,6 +52,7 @@ class Location(db.Model):
                                "thumbnail":"https://res.cloudinary.com/dixpjmvss/image/upload/" + photo.pic})
             locations_json.append({"lat":location.lat, "lon":location.lon, "name":location.name,
                                    "photos":photos})
+
         return locations_json
 
 

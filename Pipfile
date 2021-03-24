@@ -26,6 +26,7 @@ flask-script = "*"
 psycopg2-binary = "*"
 geojson = "*"
 geopy = "*"
+flask-session = "*"
 
 [dev-packages]
 
