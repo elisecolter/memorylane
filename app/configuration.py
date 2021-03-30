@@ -6,7 +6,7 @@ class Config(object):
 	DEBUG = False
 	TESTING = False
 	SESSION_TYPE = 'filesystem'
-	SQLALCHEMY_DATABASE_URI = 'postgresql:///photos_dev'
+	SQLALCHEMY_DATABASE_URI = 'postgresql://dotarcphsnumnj:37bc5c4cba91cf75b7699f088f87ddea6e116043ee3cbff29b0c9c4237bf5fcb@ec2-34-225-103-117.compute-1.amazonaws.com:5432/d874o5kaabhl1j'
 	BOOTSTRAP_FONTAWESOME = True
 	SECRET_KEY = "this-needs-to-be-changed"
 	CSRF_ENABLED = True
