@@ -347,12 +347,18 @@ markerClusters.on('click', function (a) {
   e.unbindPopup().bindPopup(markerTitle, markerOptions).on("popupopen", (a) => {
     var popUp = a.target.getPopup()
       popUp.getElement().addEventListener("click", l => {
-      if (map.getZoom() == 19 && !(e.active)) {
-          activateMarker(e);
+      if (e.options.active) {
+        deactivateMarker(e);
+        return;
+      }
+      if (map.getZoom() == 19 && !(e.options.active)) {
+        activateMarker(e);
       }
     });
   });
-  map.flyTo(e._latlng, 19, {duration:0.5});
+  if (map.getZoom() != 19) {
+    map.flyTo(e._latlng, 19, {duration:0.5});
+  }
   e.openPopup();
 });
 

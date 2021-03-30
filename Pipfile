@@ -27,6 +27,7 @@ psycopg2-binary = "*"
 geojson = "*"
 geopy = "*"
 flask-session = "*"
+gunicorn = "*"
 
 [dev-packages]
 
