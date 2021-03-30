@@ -98,6 +98,10 @@ var cartoLight = L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net
   maxZoom: 19,
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
 });
+// var cartoLight = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+//   maxZoom: 19,
+//   attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+// });
 var usgsImagery = L.layerGroup([L.tileLayer("http://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}", {
   maxZoom: 15,
 }), L.tileLayer.wms("http://raster.nationalmap.gov/arcgis/services/Orthoimagery/USGS_EROS_Ortho_SCALE/ImageServer/WMSServer?", {
@@ -357,13 +361,32 @@ map = L.map("map", {
   center: [40.35, -74.66],
   layers: [cartoLight, highlight, markerClusters, photoLayer],
   zoomControl: false,
-  attributionControl: false
+  attributionControl: false,
+  scrollWheelZoom: 'center', // zoom to center regardless where mouse is
+  doubleClickZoom: 'center',
+  touchZoom:       'center'
 });
 
 //add zoom control with your options
 L.control.zoom({
      position:'topright'
 }).addTo(map);
+
+
+var geocoder = L.Control.geocoder({
+  defaultMarkGeocode: false
+})
+  .on('markgeocode', function(e) {
+    var bbox = e.geocode.bbox;
+    var poly = L.polygon([
+      bbox.getSouthEast(),
+      bbox.getNorthEast(),
+      bbox.getNorthWest(),
+      bbox.getSouthWest()
+    ]);
+    map.fitBounds(poly.getBounds());
+  })
+  .addTo(map);
 
 $("#uploadPhoto").submit(function (){ 
   latlng = map.getBounds().getCenter();

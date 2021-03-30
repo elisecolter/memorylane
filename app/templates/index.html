@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#000000">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>TimeMachine</title>
+    <title>MemoryLane</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='Leaflet.Photo/Leaflet.Photo.css') }}">
 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <link rel="apple-touch-icon" sizes="76x76" href="static/img/favicon-76.png">
     <link rel="apple-touch-icon" sizes="120x120" href="static/img/favicon-120.png">
     <link rel="apple-touch-icon" sizes="152x152" href="static/img/favicon-152.png">
@@ -36,15 +37,15 @@
             <a href="#" class="navbar-icon pull-right visible-xs" id="nav-btn"><i class="fa fa-bars fa-lg white"></i></a>
             <a href="#" class="navbar-icon pull-right visible-xs" id="sidebar-toggle-btn"><i class="fa fa-search fa-lg white"></i></a>
           </div>
-          <a class="navbar-brand" href="#">TimeMachine</a>
+          <a class="navbar-brand" href="#">MemoryLane</a>
         </div>
         <div class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right" role="search">
+          <!-- <form class="navbar-form navbar-right" role="search">
             <div class="form-group has-feedback">
                 <input id="searchbox" type="text" placeholder="Search" class="form-control">
                 <span id="searchicon" class="fa fa-search form-control-feedback"></span>
             </div>
-          </form>
+          </form> -->
           <ul class="nav navbar-nav">
             <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn"><i class="fa fa-question-circle white"></i>&nbsp;&nbsp;About</a></li>
             <li class="dropdown">
@@ -59,14 +60,14 @@
 
             <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="upload-btn"><i class="fa fa-cloud-upload white"></i>&nbsp;&nbsp;Upload</a></li>
             
-            <li class="hidden-xs"><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-list white"></i>&nbsp;&nbsp;Filter</a></li>
+<!--             <li class="hidden-xs"><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-list white"></i>&nbsp;&nbsp;Filter</a></li> -->
           </ul>
         </div><!--/.navbar-collapse -->
       </div>
     </div>
 
     <div id="container">
-      <div id="sidebar">
+      <!-- <div id="sidebar">
         <div class="sidebar-wrapper">
           <div class="panel panel-default" id="features">
             <div class="panel-heading">
@@ -101,7 +102,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <div id="map"></div>
     </div>
     <!-- <div id="loading">
@@ -290,6 +291,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.73.0/L.Control.Locate.min.js"></script>
     <script src="{{ url_for('static', filename='leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js') }}"></script>
     <script src="{{ url_for('static', filename='Leaflet.Photo/Leaflet.Photo.js') }}"></script> 
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>  
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
 </html>
