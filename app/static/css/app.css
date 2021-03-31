@@ -58,8 +58,9 @@ input[type="radio"], input[type="checkbox"] {
 
 .photo-modal-image {
   max-height: 58vh; overflow-y: auto;
-/*  width: 100%;
-  height: 100%;*/
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
   object-fit: contain;
   border: 10px solid white;
   box-shadow: 10px 10px 5px #ccc;
