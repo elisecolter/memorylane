@@ -28,6 +28,7 @@ geojson = "*"
 geopy = "*"
 flask-session = "*"
 gunicorn = "*"
+geographiclib = "*"
 
 [dev-packages]
 

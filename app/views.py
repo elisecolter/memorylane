@@ -31,6 +31,11 @@ def api_photos() -> dict:
     photos = Location.fetch_all_photos()
     return json.dumps(photos)
 
+@app.route('/locations/')
+def api_locations() -> dict:
+    locations = Location.fetch_all()
+    return json.dumps(locations)
+
 @app.route("/upload-image", methods=["GET", "POST"])
 def upload_image():
     if request.method == "POST":
@@ -56,6 +61,10 @@ def upload_image():
             exif_decoded = parser.get_exif_data(Image.open(image))
             taken_coords = parser.taken_lat_lon(exif_decoded)
             dest_coords = parser.dest_lat_lon(exif_decoded)
+            angle = parser.taken_angle(exif_decoded)
+
+            if not angle:
+                angle = -1
 
             # Center map at photo if it has coordinates
             if taken_coords[0] and taken_coords[1]:
@@ -66,7 +75,7 @@ def upload_image():
             # taken = parser.get_taken(exif_decoded)
             taken = datetime.datetime.now()
             photo = {"pic": public_id, "taken": taken, "coords": dest_coords,
-                     "taken_coords": taken_coords}
+                     "taken_coords": taken_coords, "angle":angle}
 
             session['photo'] = photo
 
@@ -82,7 +91,6 @@ def add_crosshair():
         public_id = photo['pic']
         url = "https://res.cloudinary.com/dixpjmvss/image/upload/" + public_id
 
-
         lat = request.form.get("lat2")
         lon = request.form.get("lon2")
 
@@ -91,7 +99,7 @@ def add_crosshair():
         session['photo'] = photo
     else:
         return redirect("/")
-    return render_template("camera.html", lat=lat, lon=lon, url=url)
+    return render_template("camera.html", lat=lat, lon=lon, url=url, angle=photo['angle'])
 
 @app.route("/add-camera", methods=["GET", "POST"])
 def add_camera():
@@ -100,26 +108,45 @@ def add_camera():
 
         lat = request.form.get("lat2")
         lon = request.form.get("lon2")
+        loc_new = request.form.get("loc_new")
+        loc_id = request.form.get("loc_id")
 
         # Update destination coords
         dest_coords = (lat, lon)
         photo['dest_coords'] = dest_coords
 
-        # Add to location
-        new_loc = None
-        # Very very inefficient
-        locations = Location.fetch_all()
-        for location in locations:
-            if location.equals(lat, lon):
-                new_loc = location
-                break
+        if loc_id:
+            print("add to location")
+            location = Location.query.get(loc_id)
+            location.add_photo(Photo(pic=photo['pic'], taken=photo['taken'], coords = dest_coords, 
+                                    taken_coords=photo['taken_coords'], loc=location))
 
-        if new_loc is None:
-            new_loc = Location(lat=lat, lon=lon)
+        else:
+            print("new location")
+            loc_name = ""
+            if loc_new:
+                loc_name = loc_new
+
+            new_loc = Location(lat=lat, lon=lon, name=loc_name)
+
+            new_loc.add_photo(Photo(pic=photo['pic'], taken=photo['taken'], coords = dest_coords, 
+                                    taken_coords=photo['taken_coords'], loc=new_loc))
+
+        # # Add to location
+        # new_loc = None
+        # # Very very inefficient
+        # locations = Location.fetch_all()
+        # for location in locations:
+        #     if location.equals(lat, lon):
+        #         new_loc = location
+        #         break
+
+        # if new_loc is None:
+        #     new_loc = Location(lat=lat, lon=lon)
 
 
-        new_loc.add_photo(Photo(pic=photo['pic'], taken=photo['taken'], coords = dest_coords, 
-                                taken_coords=photo['taken_coords'], loc=new_loc))
+        # new_loc.add_photo(Photo(pic=photo['pic'], taken=photo['taken'], coords = dest_coords, 
+        #                         taken_coords=photo['taken_coords'], loc=new_loc))
 
         print(photo)
         session.pop('photo')

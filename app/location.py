@@ -45,6 +45,15 @@ class LocationParser:
         # TODO: somewhere that's not Blair Arch
         return (40.347532, -74.660949)
 
+    def taken_angle(self, exif_data):
+        angle = None
+
+        if "GPSInfo" in exif_data:
+            gps_info = exif_data["GPSInfo"]
+            angle = self._get_if_exists(gps_info, "GPSImgDirection")
+
+        return angle
+
     def taken_lat_lon(self, exif_data):
         """Returns the latitude and longitude, if available, from the provided exif_data (obtained through get_exif_data above)"""
         lat = None

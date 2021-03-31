@@ -16,9 +16,10 @@ class Location(db.Model):
 
     photos = relationship("Photo", back_populates="location")
 
-    def __init__(self, lat, lon):
+    def __init__(self, lat, lon, name):
         self.lat = lat
         self.lon = lon
+        self.name = name
 
         db.session.add(self)
         db.session.commit()
@@ -37,7 +38,13 @@ class Location(db.Model):
         db.session.commit()
 
     def fetch_all():
-        return db.session.query(Location).all()
+        locations = db.session.query(Location).all()
+        locations_json = []
+
+        for location in locations:
+            locations_json.append({"lat":location.lat, "lon":location.lon, "name":location.name, "id":location.id})
+
+        return locations_json
 
     def fetch_all_photos():
         locations = db.session.query(Location).all()

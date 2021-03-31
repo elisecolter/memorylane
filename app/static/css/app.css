@@ -27,9 +27,9 @@ input[type="radio"], input[type="checkbox"] {
 
 .photo-modal {
    position: absolute;
-   top: 100px;
+   top: 60px;
    right: 30%;
-   bottom: 100px;
+   bottom: 10px;
    left: 0;
    z-index: 10040;
    overflow: auto;
@@ -47,13 +47,19 @@ input[type="radio"], input[type="checkbox"] {
   box-shadow: 0 5px 15px rgb(0 0 0 / 0%);
 }
 
+.photo-modal .modal-header {
+  text-align: center;
+  border-bottom: 0;
+}
+
 .photo-modal .modal-footer {
   border-top: 0;
 }
 
 .photo-modal-image {
-  width: 100%;
-  height: 100%;
+  max-height: 58vh; overflow-y: auto;
+/*  width: 100%;
+  height: 100%;*/
   object-fit: contain;
   border: 10px solid white;
   box-shadow: 10px 10px 5px #ccc;

@@ -1,5 +1,48 @@
 var map, featureList, boroughSearch = [], theaterSearch = [], museumSearch = [];
 
+/* Geographic calculations helper functions */
+// Converts from degrees to radians.
+function toRadians(degrees) {
+  return degrees * Math.PI / 180;
+};
+ 
+// Converts from radians to degrees.
+function toDegrees(radians) {
+  return radians * 180 / Math.PI;
+}
+
+function bearing(startLat, startLng, destLat, destLng){
+  startLat = toRadians(startLat);
+  startLng = toRadians(startLng);
+  destLat = toRadians(destLat);
+  destLng = toRadians(destLng);
+
+  y = Math.sin(destLng - startLng) * Math.cos(destLat);
+  x = Math.cos(startLat) * Math.sin(destLat) -
+        Math.sin(startLat) * Math.cos(destLat) * Math.cos(destLng - startLng);
+  brng = Math.atan2(y, x);
+  brng = toDegrees(brng);
+  return (brng + 360) % 360;
+}
+
+function pointFromAngle(latitude, longitude, bearing) {
+    distance = 0.05;
+    // distance in KM, bearing in degrees
+    var R = 6378.1,                         // Radius of the Earth
+        brng = toRadians(bearing)       // Convert bearing to radian
+        lat = toRadians(latitude),       // Current coords to radians
+        lon = toRadians(longitude);
+
+    // Do the math magic
+    lat = Math.asin(Math.sin(lat) * Math.cos(distance / R) + Math.cos(lat) * Math.sin(distance / R) * Math.cos(brng));
+    lon += Math.atan2(Math.sin(brng) * Math.sin(distance / R) * Math.cos(lat), Math.cos(distance/R)-Math.sin(lat)*Math.sin(lat));
+
+    latd = toDegrees(lat);
+    lond = toDegrees(lon);
+
+    return L.latLng(latd, lond);
+}
+
 $(window).resize(function() {
   sizeLayerControl();
 });
@@ -113,19 +156,34 @@ var usgsImagery = L.layerGroup([L.tileLayer("http://basemap.nationalmap.gov/arcg
   attribution: "Aerial Imagery courtesy USGS"
 })]);
 
+// /* Icons */
+// var inactiveIcon = L.icon({
+//         iconUrl: "/static/assets/marker-icon-grey.png",
+//         iconSize: [16, 25],
+//         iconAnchor: [8, 25],
+//         popupAnchor: [40, 25]
+// });
+
+// var activeIcon = L.icon({
+//         iconUrl: "/static/assets/marker-icon-red.png",
+//         iconSize: [16, 25],
+//         iconAnchor: [8, 25],
+//         popupAnchor: [40, 25]
+// });
+
 /* Icons */
 var inactiveIcon = L.icon({
-        iconUrl: "/static/assets/marker-icon-grey.png",
-        iconSize: [16, 25],
-        iconAnchor: [8, 25],
-        popupAnchor: [40, 25]
+        iconUrl: "/static/assets/simple_pin.svg",
+        iconSize: [30, 49],
+        iconAnchor: [15, 40],
+        popupAnchor: [45, 20]
 });
 
 var activeIcon = L.icon({
-        iconUrl: "/static/assets/marker-icon-red.png",
-        iconSize: [16, 25],
-        iconAnchor: [8, 25],
-        popupAnchor: [40, 25]
+        iconUrl: "/static/assets/simple_pin_red.svg",
+        iconSize: [30, 49],
+        iconAnchor: [15, 40],
+        popupAnchor: [45, 20]
 });
 
 /* Overlay Layers */
@@ -187,15 +245,16 @@ $.getJSON("/photos/", function(data) {
       var lat = photo.lat;
       var lon = photo.lng;
       var url = photo.url;
+      var azimuth = bearing(lat, lon, location.lat, location.lon);
       var angle = getAngle(location.lon, location.lat, lon, lat);
 
-      var photo = {lat: lat, lon: lon, url: url, angle: angle}
+      var photo = {lat: lat, lon: lon, url: url, angle: angle, bearing:azimuth, thumbnail:url}
       photosSorted.push(photo);
     }
     sortByAngle(photosSorted);
 
     // Create a layer of the photos attached to that marker
-    var markerPhotos = L.photo.cluster({maxClusterRadius: 2}).add(photos);
+    var markerPhotos = L.photo.cluster({maxClusterRadius: 2}).add(photosSorted);
     var markerLines = new L.MarkerClusterGroup();
 
     // Include lines
@@ -209,8 +268,7 @@ $.getJSON("/photos/", function(data) {
       active: false,
       icon: inactiveIcon,
       title: location.name,
-      photos: location.photos,
-      photosSorted: photosSorted,
+      photos: photosSorted,
       markerPhotos: markerPhotos,
       markerLines: markerLines,
       riseOnHover: true
@@ -262,6 +320,19 @@ function activateMarker(e) {
   });
 }
 
+/* Open google streetview */
+$("#streetview").on('click', function (a) {
+  bearing = displayedPhoto.bearing;
+  coords = displayedPhoto.lat + ',' + displayedPhoto.lon;
+  url_begin = 'https:maps.google.com/maps?q=&layer=c&cbll='
+  url_mid = '&cbp=0,'
+  url_end = ',0,0,0'
+  streetview_url = url_begin + coords + url_mid + bearing + url_end;
+
+  console.log(streetview_url);
+  window.open(streetview_url, "_blank");
+});
+
 /* Get next photo by angle */
 function getNextPhotoLeft() {
   var photoLayer = activeMarker.options.markerPhotos;
@@ -274,7 +345,7 @@ function getNextPhotoLeft() {
 }
 
 $("#photoLeft").on('click', function (a) {
-  photos = activeMarker.options.photosSorted;
+  photos = activeMarker.options.photos;
 
   if (displayedPhoto.url == photos[0].url) {
     displayedPhoto = photos[photos.length - 1];
@@ -293,7 +364,7 @@ $("#photoLeft").on('click', function (a) {
 });
 
 $("#photoRight").on('click', function (a) {
-  photos = activeMarker.options.photosSorted;
+  photos = activeMarker.options.photos;
 
   if (displayedPhoto.url == photos[photos.length - 1].url) {
     displayedPhoto = photos[0];
@@ -368,9 +439,7 @@ map = L.map("map", {
   layers: [cartoLight, highlight, markerClusters, photoLayer],
   zoomControl: false,
   attributionControl: false,
-  scrollWheelZoom: 'center', // zoom to center regardless where mouse is
-  doubleClickZoom: 'center',
-  touchZoom:       'center'
+  scrollWheelZoom: true
 });
 
 //add zoom control with your options
