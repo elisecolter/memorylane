@@ -29,6 +29,7 @@ geopy = "*"
 flask-session = "*"
 gunicorn = "*"
 geographiclib = "*"
+google-cloud-vision = "*"
 
 [dev-packages]
 
