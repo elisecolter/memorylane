@@ -18,7 +18,7 @@
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>  
 
   </head>
-  <body>
+  <body  style="overflow: hidden;">
     <meta id="lat" data-name="lat" data-val="{{lat}}">
     <meta id="lon" data-name="lon" data-val="{{lon}}">
     <meta id="url" data-name="url" data-val="{{url}}">
@@ -31,14 +31,6 @@
           </div>
           <a class="navbar-brand" href="#">MemoryLane</a>
         </div>
-        <div class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right" role="search">
-            <div class="form-group has-feedback">
-                <input id="searchbox" type="text" placeholder="Search" class="form-control">
-                <span id="searchicon" class="fa fa-search form-control-feedback"></span>
-            </div>
-          </form>
-        </div><!--/.navbar-collapse -->
       </div>
     </div>
     <form id="addLocation" action="/add-crosshair" method="POST" enctype="multipart/form-data">

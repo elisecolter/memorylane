@@ -54,7 +54,11 @@ class Location(db.Model):
             photos = []
 
             for photo in location.photos:
-                photos.append({"lat":photo.taken_lat, "lng":photo.taken_lon,
+                # datetime_taken = photo.taken;
+                # taken = datetime_taken.strftime("%m/%d/%Y, %H:%M:%S")
+                taken = photo.taken.strftime("%Y")
+
+                photos.append({"lat":photo.taken_lat, "lng":photo.taken_lon, "taken":taken, "title":photo.title,
                                "url":"https://res.cloudinary.com/dixpjmvss/image/upload/" + photo.pic, 
                                "thumbnail":"https://res.cloudinary.com/dixpjmvss/image/upload/" + photo.pic})
             locations_json.append({"lat":location.lat, "lon":location.lon, "name":location.name,
@@ -62,13 +66,74 @@ class Location(db.Model):
 
         return locations_json
 
+class Collection(db.Model):
+    __tablename__ = 'collections'
+
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(50))
+    info = db.Column(db.String(150))
+    lat = db.Column(db.Float)
+    lon = db.Column(db.Float)
+
+    c_photos = relationship("Photo", back_populates="collection")
+
+    def __init__(self, name, info):
+        self.name = name
+        self.info = info
+        db.session.add(self)
+        db.session.commit()
+
+    def add_photo(self, photo):
+        self.c_photos.append(photo)
+        db.session.commit()
+
+    def remove_photo(self, photo):
+        self.c_photos.remove(photo)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def fetch_photos(self):
+        photos_json = []
+        for photo in self.c_photos:
+            # datetime_taken = photo.taken;
+            # taken = datetime_taken.strftime("%m/%d/%Y, %H:%M:%S")
+            taken = None
+            if photo.taken:
+                taken = photo.taken.strftime("%Y")
+
+            photos_json.append({"id": photo.id, "lat":photo.taken_lat, "lng":photo.taken_lon, "taken":taken, "title":photo.title,
+                            "url":"https://res.cloudinary.com/dixpjmvss/image/upload/" + photo.pic, 
+                            "thumbnail":"https://res.cloudinary.com/dixpjmvss/image/upload/" + photo.pic})
+        return photos_json
+
+    def fetch_by_id(id):
+        return db.session.query(Collection).get(id)
+
+    def fetch_all():
+        collections = db.session.query(Collection).all()
+
+        collections_json = []
+        for collection in collections:
+            url = ''
+            if collection.c_photos:
+                url = collection.c_photos[0].pic
+            collections_json.append({"id":collection.id, "name":collection.name, "url":url, "size":len(collection.c_photos)})
+
+        return collections_json
+
+
 
 class Photo(db.Model):
     __tablename__ = 'photos'
 
     id = db.Column(db.Integer, primary_key = True)
     pic = db.Column(db.String(50))
-    taken = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    title = db.Column(db.String(50))
+    taken_str = db.Column(db.String(25))
+    taken = db.Column(db.DateTime)
     lat = db.Column(db.Float)
     lon = db.Column(db.Float)
     taken_lat = db.Column(db.Float)
@@ -77,16 +142,45 @@ class Photo(db.Model):
     location_id = db.Column(db.ForeignKey(Location.id))
     location = relationship("Location", back_populates="photos")
 
-    def __init__(self, pic, taken, coords, taken_coords, loc):
+    collection_id = db.Column(db.ForeignKey(Collection.id))
+    collection = relationship("Collection", back_populates="c_photos")
+
+    def __init__(self, pic, taken, coords, taken_coords, loc, title):
         self.location = loc
-        self.location_id = loc.id
         self.pic = pic
         self.taken = taken
         self.lat = coords[0]
         self.lon = coords[1]
         self.taken_lat = taken_coords[0]
         self.taken_lon = taken_coords[1]
+        self.title = title
+
+        if loc:
+            self.location_id = loc.id
+
         db.session.add(self)
+        db.session.commit()
+
+    def update(self, pic, taken, coords, taken_coords, loc, title):
+        self.location = loc
+        self.pic = pic
+        self.taken = taken
+        self.lat = coords[0]
+        self.lon = coords[1]
+        self.taken_lat = taken_coords[0]
+        self.taken_lon = taken_coords[1]
+        self.title = title
+        if loc:
+            self.location_id = loc.id
+
+        db.session.commit()
+
+    def fetch_by_id(id):
+        return db.session.query(Photo).get(id)
+
+    def remove_collection(self):
+        if self.collection_id:
+            self.collection_id = None
         db.session.commit()
 
     def fetch_all():
@@ -94,7 +188,8 @@ class Photo(db.Model):
         photos_json = []
 
         for photo in photos:
-            photos_json.append({"lat":photo.lat, "lng":photo.lon, 
+            taken = photo.taken.strftime("%Y")
+            photos_json.append({"lat":photo.lat, "lng":photo.lon, "taken":taken, "title":photo.title,
                 "url":"https://res.cloudinary.com/dixpjmvss/image/upload/" + photo.pic,
                 "thumbnail":"https://res.cloudinary.com/dixpjmvss/image/upload/" + photo.pic,
                 "name":"please work"})

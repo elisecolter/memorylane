@@ -32,9 +32,10 @@ lm.setup_app(app)
 lm.login_view = 'login'
 
 from app import views, models
-from .models import Photo, Location
+from .models import Photo, Location, Collection
 
 admin.add_view(ModelView(Photo, db.session))
 admin.add_view(ModelView(Location, db.session))
+admin.add_view(ModelView(Collection, db.session))
 
 db.create_all()

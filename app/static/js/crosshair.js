@@ -49,7 +49,9 @@ L.Control.textbox = L.Control.extend({
   var url = $("#url").data().val;
   var text = L.DomUtil.create('div');
   text.id = "info-box";
-  text.innerHTML = '<img src="' + url + '" class="photo-modal-image shadow-lg">'
+  text.innerHTML = '<p class="instructions-title">Geotag Photo</p>\
+  <div class="crosshair-instructions">Position the crosshair over the location where the photo was taken from, then press submit.</div>\
+  <img src="' + url + '" class="tagging-photo-image">'
   return text;
   },
   onRemove: function(map) {
@@ -68,7 +70,7 @@ var submit = L.control({
 submit.onAdd = function(map) {
   var div = L.DomUtil.create('div');
   div.id = 'submit';
-  div.innerHTML = '<button type="submit" form="addLocation" class="btn btn-default justify-center">Submit</button>'
+  div.innerHTML = '<button type="submit" form="addLocation" class="btn submit-button btn-lg btn-dark justify-center">Submit</button>'
   return div;
 }
 

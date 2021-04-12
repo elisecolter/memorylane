@@ -164,7 +164,10 @@ L.Control.textbox = L.Control.extend({
       
           var text = L.DomUtil.create('div');
           text.id = "info-box";
-          text.innerHTML = '<img src="' + url + '" class="photo-modal-image shadow-lg">'
+          text.innerHTML = '<p class="instructions-title">Add Landmark</p>\
+          <div class="crosshair-instructions">Drag the target over the landmark the photo was taken of, or click a pin to add the photo to an existing landmark. \
+          Add the name of a new landmark (optional).</div>\
+          <img src="' + url + '" class="tagging-photo-image">'
           return text;
           },
 
@@ -183,8 +186,8 @@ var submit = L.control({
 submit.onAdd = function(map) {
   var div = L.DomUtil.create('div');
   div.id = 'submit';
-  div.innerHTML = '<input type="text" placeholder="New Location Name" maxlength="20" id="loc_new_input"><br><br>\
-                   <button type="submit" form="addTarget" class="btn btn-default justify-center">Submit</button>'
+  div.innerHTML = '<input type="text" placeholder="Landmark Name" maxlength="20" id="loc_new_input"><br><br>\
+                   <button type="submit" form="addTarget" class="btn submit-button btn-lg btn-default justify-center">Add Landmark</button>'
   return div;
 }
 
@@ -290,6 +293,14 @@ geotagPhotoCamera.on('change', function (event) {
       layer.options.active = false;
       layer.setIcon(pinIcon);
     });
+
+  var point = geotagPhotoCamera.getTargetPoint()
+  console.log(point)
+  console.log(point.coordinates[1]);
+  var loc_new_input = $('#loc_new_input').val();
+  $("#loc_new").val(loc_new_input);
+  $("#lat2").val(point.coordinates[1]);
+  $("#lon2").val(point.coordinates[0]);
 });
 
 var geocoder = L.Control.geocoder({

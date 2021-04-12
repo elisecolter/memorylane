@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/styles/default.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/details.css') }}">
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.Default.css" />
@@ -24,10 +25,12 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>  
   </head>
-  <body  style="overflow: hidden;">
+  <body style="overflow: hidden;">
     <meta id="lat" data-name="lat" data-val="{{lat}}">
     <meta id="lon" data-name="lon" data-val="{{lon}}">
     <meta id="url" data-name="url" data-val="{{url}}">
+    <meta id="date_input" data-name="date_input" data-val="{{date}}">
+
     <meta id="angle" data-name="angle" data-val="{{angle}}">
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
@@ -39,15 +42,15 @@
           <a class="navbar-brand" href="#">MemoryLane</a>
         </div>
         <div class="navbar-collapse collapse">
-          
+
         </div><!--/.navbar-collapse -->
       </div>
     </div>
-    <form id="addTarget" action="/add-camera" method="POST" enctype="multipart/form-data">
+    <form id="addDetails" action="/add-details" method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="lat2" id="lat2">
                             <input type="hidden" name="lon2" id="lon2">  
-                            <input type="hidden" name="loc_new" id="loc_new">
-                            <input type="hidden" name="loc_id" id="loc_id">
+                            <input type="hidden" name="date" id="date">
+                            <input type="hidden" name="title" id="title">
                           </form>
     <div id="map"></div>
     <div id="slider-container">
@@ -65,6 +68,6 @@
       <pre><samp id="output">
       </samp></pre>
     </div> -->
-    <script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/details.js') }}"></script>
   </body>
 </html>

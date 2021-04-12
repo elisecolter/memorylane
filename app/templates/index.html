@@ -29,7 +29,13 @@
     <link rel="icon" type="image/x-icon" href="static/img/favicon.ico">
   </head>
 
-  <body>
+  <meta id="landmark_lat" data-name="lat" data-val="{{lat}}">
+  <meta id="landmark_lon" data-name="lon" data-val="{{lon}}">
+  <meta id="confidence" data-name="confidence" data-val="{{confidence}}">
+  <meta id="landmark_name" data-name="landmark_name" data-val="{{landmark_name}}">
+  <meta id="landmark" data-name="landmark" data-val="{{landmark_name}}">
+
+  <body style="overflow: hidden;">
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -48,18 +54,9 @@
           </form> -->
           <ul class="nav navbar-nav">
             <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn"><i class="fa fa-question-circle white"></i>&nbsp;&nbsp;About</a></li>
-            <li class="dropdown">
-              <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-globe white"></i>&nbsp;&nbsp;Tools <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="full-extent-btn"><i class="fa fa-arrows-alt"></i>&nbsp;&nbsp;Zoom To Full Extent</a></li>
-                <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="legend-btn"><i class="fa fa-picture-o"></i>&nbsp;&nbsp;Show Legend</a></li>
-                <li class="divider hidden-xs"></li>
-                <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="login-btn"><i class="fa fa-user"></i>&nbsp;&nbsp;Login</a></li>
-              </ul>
-            </li>
-
-            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="upload-btn"><i class="fa fa-cloud-upload white"></i>&nbsp;&nbsp;Upload</a></li>
-            
+            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="upload-btn"><i class="fa fa-cloud-upload white"></i>&nbsp;&nbsp;Add Images</a></li>
+            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="landmark-btn"><i class="fa fa-globe white"></i>&nbsp;&nbsp;Detect Landmarks</a></li>
+            <li><a href="collections/" id="collection-btn"><i class="fa fa-image white"></i>&nbsp;&nbsp;Geotag Collections</a></li>
 <!--             <li class="hidden-xs"><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-list white"></i>&nbsp;&nbsp;Filter</a></li> -->
           </ul>
         </div><!--/.navbar-collapse -->
@@ -116,8 +113,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title">
-              title & date taken
+            <h4 id="photoTitle" class="modal-title">
             </h4>
           </div>
           <div class="photo-modal-body modal-body">
@@ -128,9 +124,8 @@
           <div class="modal-footer">
             <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
               <div class="btn-group mr-2" role="group" aria-label="First group">
-                <button type="button" class="btn btn-secondary active">Angle</button>
-                <button type="button" class="btn btn-secondary">Distance</button>
-                <button type="button" class="btn btn-secondary">Time</button>
+                <button type="button" id="angleButton" class="btn btn-secondary active">Angle</button>
+                <button type="button" id="timeButton" class="btn btn-secondary">Time</button>
               </div>
             <button style="border: 0;box-shadow: 5px 5px 5px #d3d3d3"type="button pull-right" class="btn btn-default" id="streetview">Open StreetView</button>
             <div class="btn-group pull-right">
@@ -142,46 +137,21 @@
       </div>
     </div>
 
-    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
+    <div class="modal upload-modal fade" id="aboutModal" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <button class="close upload-close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h4 class="modal-title">2021 Spring IW Project</h4>
           </div>
           <div class="modal-body">
-            <ul class="nav nav-tabs nav-justified" id="aboutTabs">
-              <li class="active"><a href="#about" data-toggle="tab"><i class="fa fa-question-circle"></i>&nbsp;About the project</a></li>
-              <li><a href="#contact" data-toggle="tab"><i class="fa fa-envelope"></i>&nbsp;Contact</a></li>
-              <li><a href="#disclaimer" data-toggle="tab"><i class="fa fa-exclamation-circle"></i>&nbsp;Disclaimer</a></li>
-            </ul>
-            <div class="tab-content" id="aboutTabsContent">
-              <div class="tab-pane fade active in" id="about">
-                <p>A proof-of-concept application for a geographic photo visualizer</p>
-                <div class="panel panel-primary">
-                  <div class="panel-heading">Features</div>
-                  <ul class="list-group">
-                    <li class="list-group-item">Feature one</li>
-                    <li class="list-group-item">Feature two</li>
-                    <li class="list-group-item">Feature three</li>
-                  </ul>
-                </div>
-              </div>
-              <div id="disclaimer" class="tab-pane fade text-danger">
-                <p>The data provided on this site is for informational and planning purposes only.</p>
-                <p>Absolutely no accuracy or completeness guarantee is implied or intended.</p>
-              </div>
-              <div class="tab-pane fade" id="contact">
-                <p>Developed by <a href="mailto:ccolter@princeton.edu">Elise Colter</a></p>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <p>A proof-of-concept application for a geographic photo visualizer</p>
+            <p>Developed by <a href="mailto:ccolter@princeton.edu">Elise Colter</a></p>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+
 
     <div class="modal fade" id="legendModal" tabindex="-1" role="dialog">
       <div class="modal-dialog">
@@ -199,62 +169,116 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+<!-- 
+    <input type="file" class="custom-file-input" accept=".jpg,.jpeg,.png" name="image" id="image"> -->
 
-    <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog">
+    <div class="modal fade upload-modal" id="uploadModal" tabindex="-1" role="dialog">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Upload a Photo</h4>
+            <button type="button" class="close upload-close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Add a Photo</h4>
           </div>
           <div class="modal-body">
+            <p> Select an individual photo to geotag it and place it on the map, or select multiple photos to create a collection that can be individually geotagged.
+            <br>
             <form id="uploadPhoto" action="/upload-image" method="POST" enctype="multipart/form-data">
               <div class="form-group">
-                <div class="custom-file">
+
+<!--                 <div class="custom-file-upload">
                   <input type="file" class="custom-file-input" accept=".jpg,.jpeg,.png" name="image" id="image">
                   <label class="custom-file-label" for="image">Select image...</label>
-                </div>
+                </div> -->
+
+                <div class="container" style="width:100%">
+                    <div class="row">
+                    <div class="col-sm-offset-2 col-sm-8"><br><br>
+                <div class="form-group">
+                <div class="input-group">
+                  <input type="text" class="form-control" readonly>
+                <div class="input-group-btn">
+                  <span class="fileUpload btn">
+                      <span class="upl" id="upload">Select Photos</span>
+                      <input type="file" name="image" accept=".jpg,.jpeg,.png" class="upload up" id="up" multiple/>
+                    </span><!-- btn-orange -->
+                 </div><!-- btn -->
+                 </div><!-- group -->
+                 </div><!-- form-group -->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="block" id="collection_name" hidden>
+                    <label class="upload-label">Collection Name</label>
+                    <input class="upload-field" style="background-color:#f5f5f5; 
+  border: 1px solid lightgrey; 
+  height:30px;
+  width:50%;
+  border-radius: 2px;" type="text" maxlength="50" name="collection_name"/>
+                  </div>
+                  <div class="block" id="collection_info" hidden>
+                    <label class="upload-label">Description (optional)</label>
+                    <input type="text" style="background-color:#f5f5f5; 
+  border: 1px solid lightgrey; 
+  height:30px;
+  width: 50%;
+  border-radius: 2px;" maxlength="150" name="collection_info"/>
+                  </div>
               </div>
               <input type="hidden" name="lat" id="lat">
               <input type="hidden" name="lon" id="lon">
-              <button type="submit" class="btn btn-primary">Upload</button>
+              <button type="submit" class="btn" style="color:white; background-color: #222">Add to Map</button>
             </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-sm">
+    <div class="modal upload-modal fade" id="landmarkModal" tabindex="-1" role="dialog" data-backdrop="false">
+      <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Login</h4>
+            <button type="button" class="close upload-close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Detect Landmarks</h4>
           </div>
-          <div class="modal-body">
-            <form id="contact-form">
-              <fieldset>
-                <div class="form-group">
-                  <label for="name">Username:</label>
-                  <input type="text" class="form-control" id="username">
-                </div>
-                <div class="form-group">
-                  <label for="email">Password:</label>
-                  <input type="password" class="form-control" id="password">
-                </div>
-              </fieldset>
-            </form>
+          <div id="landmarkModalBody" class="modal-body">
+            <p> Run Google Cloud Vision to identify the name and coordinates of any landmark recognized in the photo. </p>
+            <form id="uploadPhotoLandmarks" action="/upload-image-landmarks" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <div class="input-group">
+                  <input type="text" class="form-control" readonly>
+                <div class="input-group-btn">
+                  <span class="fileUpload btn">
+                      <span class="upl" id="upload">Select Photo</span>
+                      <input type="file" name="image" accept=".jpg,.jpeg,.png" class="upload up" id="up"/>
+                    </span><!-- btn-orange -->
+                 </div><!-- btn -->
+            </div>
+            <br>
+            <button type="submit" class="btn" style="color:white; background-color: #222">Detect Landmarks</button>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary" data-dismiss="modal">Login</button>
+          </form>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+
+
+    <div class="modal upload-modal" id="foundLandmarkModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close upload-close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 id="foundLandmarkTitle" class="modal-title"></h4>
+          </div>
+
+          <div id="foundLandmarkModalBody" class="modal-body">
+          </div>
+
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
 
     <div class="modal fade" id="featureModal" tabindex="-1" role="dialog">
       <div class="modal-dialog">

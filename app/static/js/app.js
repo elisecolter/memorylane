@@ -1,5 +1,29 @@
 var map, featureList, boroughSearch = [], theaterSearch = [], museumSearch = [];
 
+$(document).on('change','.up', function() {
+        var names = [];
+        var length = $(this).get(0).files.length;
+        if (length > 1){
+          $("#collection_name").removeAttr("hidden");
+          $("#collection_info").removeAttr("hidden");
+        }
+        else {
+          $("#collection_name").attr("hidden", true);
+          $("#collection_info").attr("hidden", true);
+        }
+          for (var i = 0; i < $(this).get(0).files.length; ++i) {
+              names.push($(this).get(0).files[i].name);
+          }
+          // $("input[name=file]").val(names);
+        if(length>2){
+          var fileName = names.join(', ');
+          $(this).closest('.form-group').find('.form-control').attr("value",length+" files selected");
+        }
+        else{
+          $(this).closest('.form-group').find('.form-control').attr("value",names);
+        }
+     });
+
 /* Geographic calculations helper functions */
 // Converts from degrees to radians.
 function toRadians(degrees) {
@@ -58,6 +82,27 @@ if ( !("ontouchstart" in window) ) {
   });
 }
 
+var detected_landmark = $("#landmark_name").data().val;
+var searched_landmark = $('#landmark').data().val
+if (detected_landmark != "") {
+  var landmark_lat = $("#landmark_lat").data().val;
+  var landmark_lon = $("#landmark_lon").data().val;
+  var confidence = $("#confidence").data().val;
+  $("#foundLandmarkModal").modal("show");
+  $('#foundLandmarkTitle').append('Landmark Identified')
+  $('#foundLandmarkModalBody').append('<p> Landmark: ' + detected_landmark + ' </p>');
+  $('#foundLandmarkModalBody').append('<p> Latitude: ' + landmark_lat + ' </p>');
+  $('#foundLandmarkModalBody').append('<p> Longitude: ' + landmark_lon + ' </p>');
+  $('#foundLandmarkModalBody').append('<p> Confidence: ' + confidence + ' </p>');
+  $(".navbar-collapse.in").collapse("hide");
+}
+else if (searched_landmark != "") {
+  $('#foundLandmarkTitle').append('No Landmarks Detected')
+  $("#foundLandmarkModal").modal("show");
+  $('#foundLandmarkModalBody').append('Google Cloud Vision did not identify any landmarks with significant confidence.');
+  $(".navbar-collapse.in").collapse("hide");
+} 
+
 $(document).on("mouseout", ".feature-row", clearHighlight);
 
 $("#about-btn").click(function() {
@@ -68,6 +113,12 @@ $("#about-btn").click(function() {
 
 $("#upload-btn").click(function() {
   $("#uploadModal").modal("show");
+  $(".navbar-collapse.in").collapse("hide");
+  return false;
+});
+
+$("#landmark-btn").click(function() {
+  $("#landmarkModal").modal("show");
   $(".navbar-collapse.in").collapse("hide");
   return false;
 });
@@ -176,14 +227,14 @@ var inactiveIcon = L.icon({
         iconUrl: "/static/assets/simple_pin.svg",
         iconSize: [30, 49],
         iconAnchor: [15, 40],
-        popupAnchor: [45, 20]
+        popupAnchor: [0, -5]
 });
 
 var activeIcon = L.icon({
         iconUrl: "/static/assets/simple_pin_red.svg",
         iconSize: [30, 49],
         iconAnchor: [15, 40],
-        popupAnchor: [45, 20]
+        popupAnchor: [0, -5]
 });
 
 /* Overlay Layers */
@@ -231,6 +282,10 @@ function sortByAngle(photos) {
   photos.sort((a, b) => (a.angle < b.angle) ? 1 : -1);
 }
 
+function sortByDate(photos) {
+  photos.sort((a, b) => (a.taken > b.taken) ? 1 : -1);
+}
+
 $.getJSON("/photos/", function(data) {
   for (var i = 0; i < data.length; i++) {
     console.log(i)
@@ -245,10 +300,12 @@ $.getJSON("/photos/", function(data) {
       var lat = photo.lat;
       var lon = photo.lng;
       var url = photo.url;
+      var title = photo.title;
+      var taken = photo.taken;
       var azimuth = bearing(lat, lon, location.lat, location.lon);
       var angle = getAngle(location.lon, location.lat, lon, lat);
 
-      var photo = {lat: lat, lon: lon, url: url, angle: angle, bearing:azimuth, thumbnail:url}
+      var photo = {lat: lat, lon: lon, url: url, angle: angle, bearing:azimuth, thumbnail:url, taken:taken, title:title}
       photosSorted.push(photo);
     }
     sortByAngle(photosSorted);
@@ -294,6 +351,16 @@ function deactivateMarker(e) {
   map.removeLayer(lineLayer);
 }
 
+function formatPhotoTitle(title, taken) {
+  if (taken == null) {
+    taken = "Unknown Date"
+  }
+  if (title == "" || title == null) {
+    return taken;
+  }
+  else return (title + ", " + taken)
+}
+
 function activateMarker(e) {
   e.options.active = true;
   e.setIcon(activeIcon);
@@ -315,6 +382,13 @@ function activateMarker(e) {
     map.flyTo(center, 19, {duration:0.5});
     var modal = $('#photoModal'), modalImg = $('#photoModal .photo-modal-image');
     modalImg.attr('src', a.layer.photo.url);
+
+    var title = a.layer.photo.title;
+    var taken = a.layer.photo.taken;
+    var formatTitle = formatPhotoTitle(title, taken);
+
+    $('#photoTitle').empty();
+    $('<p>' + formatTitle +'</p>').appendTo('#photoTitle');
     displayedPhoto = a.layer.photo;
     $("#photoModal").modal("show");
   });
@@ -333,17 +407,6 @@ $("#streetview").on('click', function (a) {
   window.open(streetview_url, "_blank");
 });
 
-/* Get next photo by angle */
-function getNextPhotoLeft() {
-  var photoLayer = activeMarker.options.markerPhotos;
-  photoLayer.eachLayer(function (layer) {
-    var lat = layer.photo.lat;
-    var lon = layer.photo.lng;
-
-  });
-  return left_photo
-}
-
 $("#photoLeft").on('click', function (a) {
   photos = activeMarker.options.photos;
 
@@ -360,6 +423,13 @@ $("#photoLeft").on('click', function (a) {
   }
   var modal = $('#photoModal'), modalImg = $('#photoModal .photo-modal-image');
   modalImg.attr('src', displayedPhoto.url);
+
+  var title = displayedPhoto.title;
+  var taken = displayedPhoto.taken;
+  var formatTitle = formatPhotoTitle(title, taken);
+
+  $('#photoTitle').empty();
+  $('<p>' + formatTitle +'</p>').appendTo('#photoTitle');
   $("#photoModal").modal("show");
 });
 
@@ -377,6 +447,12 @@ $("#photoRight").on('click', function (a) {
       }
     }
   }
+  var title = displayedPhoto.title;
+  var taken = displayedPhoto.taken;
+  var formatTitle = formatPhotoTitle(title, taken);
+
+  $('#photoTitle').empty();
+  $('<p>' + formatTitle +'</p>').appendTo('#photoTitle');
   var modal = $('#photoModal'), modalImg = $('#photoModal .photo-modal-image');
   modalImg.attr('src', displayedPhoto.url);
   $("#photoModal").modal("show");
@@ -467,7 +543,22 @@ $("#uploadPhoto").submit(function (){
   latlng = map.getBounds().getCenter();
   $("#lat").val(latlng.lat);
   $("#lon").val(latlng.lng);
-})
+});
+
+$('#angleButton').click(function() {
+  sortByAngle(activeMarker.options.photos);
+  $('#angleButton').addClass("active");
+  $('#timeButton').removeClass("active");
+  console.log("clicky");
+});
+
+$('#timeButton').click(function() {
+  sortByDate(activeMarker.options.photos);
+  console.log("clicky");
+  $('#timeButton').addClass("active");
+  $('#angleButton').removeClass("active");
+});
+
 
 // // Leaflet patch to make layer control scrollable on touch browsers
 // var container = $(".leaflet-control-layers")[0];
