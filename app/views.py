@@ -81,7 +81,7 @@ def upload_image_landmarks():
                     lon = '{}'.format(lat_lng.longitude)
                     return render_template("index.html", landmark_name=landmark_name, lat=lat, lon=lon, confidence=confidence)
     else:
-        return redirect("/")
+        return render_template("index.html", landmark="searched")
 
     return render_template("index.html", landmark="searched")
 
