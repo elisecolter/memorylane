@@ -325,6 +325,8 @@ def photo():
     if photo.taken:
         taken_str = photo.taken.strftime("%Y")
         metadata_exists = "True"
+    if photo.taken_lat:
+        metadata_exists = "True"
     photo_dict = {"id":photo.id, "lat":photo.taken_lat, "lng":photo.taken_lon, "taken":photo.taken_str, "title":photo.title,
                     "url":"https://res.cloudinary.com/dixpjmvss/image/upload/" + photo.pic, "collection": photo.collection_id,
                     "thumbnail":"https://res.cloudinary.com/dixpjmvss/image/upload/" + photo.pic}

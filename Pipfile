@@ -30,6 +30,7 @@ flask-session = "*"
 gunicorn = "*"
 geographiclib = "*"
 google-cloud-vision = "*"
+piexif = "*"
 
 [dev-packages]
 

@@ -186,7 +186,7 @@ var submit = L.control({
 submit.onAdd = function(map) {
   var div = L.DomUtil.create('div');
   div.id = 'submit';
-  div.innerHTML = '<input type="text" placeholder="Landmark Name" maxlength="20" id="loc_new_input"><br><br>\
+  div.innerHTML = '<input type="text" placeholder="Landmark Name" maxlength="40" id="loc_new_input"><br><br>\
                    <button type="submit" form="addTarget" class="btn submit-button btn-lg btn-default justify-center">Add Landmark</button>'
   return div;
 }
